@@ -59,7 +59,7 @@ RECEIVER_EMAILS = [
 ]
 
 
-TARGET_RESOURCES = {"codeforces", "leetcode", "codechef", "atcoder"}
+TARGET_RESOURCES = {"codeforces", "leetcode", "codechef"}
 
 HEADERS = {
     'Authorization': f'ApiKey {API_KEY}'
