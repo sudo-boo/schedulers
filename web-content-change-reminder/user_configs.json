@@ -1,0 +1,18 @@
+{
+    "users": [
+        {
+            "name": "Personal Email",
+            "email": "omkarshirpure00@gmail.com"
+        },
+        {
+            "name": "Insti Email",
+            "email": "22b0910@iitb.ac.in"
+        }
+    ],
+    "websites": [
+        {
+            "name": "DWC-About-Us-Page",
+            "url": "https://www.timeanddate.com/worldclock/india/mumbai"
+        }
+    ]
+}
