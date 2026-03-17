@@ -6,6 +6,7 @@ import datetime
 import smtplib
 import difflib
 import html
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -46,49 +47,65 @@ except Exception as e:
     raise Exception(f"An error occurred while reading user_configs.json: {e}")
         
 RECEIVER_EMAILS = [(user["email"], user["name"]) for user in user_emails]
-WEBSITES = {(site["name"], site["url"]) for site in websites}
+
+# Include the optional selector in the tuple (defaults to None if missing)
+WEBSITES = [(site["name"], site["url"], site.get("selector")) for site in websites]
 
 def current_time_str():
     return datetime.datetime.now(IST).strftime("%H:%M:%S")
 
+def extract_target_content(full_html, selector, site_name):
+    """Extracts a specific part of the HTML based on a CSS selector."""
+    if not selector:
+        return full_html # If no selector provided, check the whole page
+        
+    soup = BeautifulSoup(full_html, 'html.parser')
+    element = soup.select_one(selector)
+    
+    if element:
+        # .prettify() normalizes the HTML making the diff much cleaner to read
+        return element.prettify()
+    else:
+        print(YELLOW + f"⚠️ Warning: Selector '{selector}' not found on {site_name}. Defaulting to full HTML check." + COLOR_OFF)
+        return full_html
+
 def check_and_archive_changes():
     changes = []
-    # Using a filesystem-friendly timestamp for file names
     now_str = datetime.datetime.now(IST).strftime("%Y-%m-%d_%H-%M-%S")
     
-    for name, url in WEBSITES:
+    for name, url, selector in WEBSITES:
         try:
-            # 1. Create directory for the website
             site_dir = os.path.join("archives", name)
             os.makedirs(site_dir, exist_ok=True)
-            
             latest_path = os.path.join(site_dir, "latest.html")
             
             # Fetch content
             response = requests.get(url)
             response.raise_for_status()
-            current_content = response.text
+            current_full_content = response.text
             
-            # 2. First-time setup
+            # First-time setup
             if not os.path.exists(latest_path):
                 with open(latest_path, "w", encoding="utf-8") as f:
-                    f.write(current_content)
-                # Save the initial version in the archive too
+                    f.write(current_full_content)
                 with open(os.path.join(site_dir, f"{now_str}.html"), "w", encoding="utf-8") as f:
-                    f.write(current_content)
+                    f.write(current_full_content)
                 print(YELLOW + f"No previous content found for {name}. Saved initial version." + COLOR_OFF)
                 continue
             
-            # 3. Read old content
+            # Read old content
             with open(latest_path, "r", encoding="utf-8") as f:
-                old_content = f.read()
+                old_full_content = f.read()
             
-            # 4. Compare and generate diff
-            if current_content != old_content:
-                # Generate unified diff with 3 lines of context
+            # Extract target areas for comparison
+            current_target = extract_target_content(current_full_content, selector, name)
+            old_target = extract_target_content(old_full_content, selector, name)
+            
+            # Compare and generate diff
+            if current_target != old_target:
                 diff_generator = difflib.unified_diff(
-                    old_content.splitlines(),
-                    current_content.splitlines(),
+                    old_target.splitlines(),
+                    current_target.splitlines(),
                     fromfile='Previous',
                     tofile='Current',
                     n=3,
@@ -98,13 +115,13 @@ def check_and_archive_changes():
                 
                 changes.append((name, url, diff_list))
                 
-                # Update latest.html and create a new archived version
+                # Update latest.html and create a new archived version with the FULL HTML
                 with open(latest_path, "w", encoding="utf-8") as f:
-                    f.write(current_content)
+                    f.write(current_full_content)
                 with open(os.path.join(site_dir, f"{now_str}.html"), "w", encoding="utf-8") as f:
-                    f.write(current_content)
+                    f.write(current_full_content)
                     
-                print(GREEN + f"✅ Change detected on {name}! Archived as {now_str}.html" + COLOR_OFF)
+                print(GREEN + f"✅ Change detected on {name}! Archived full HTML as {now_str}.html" + COLOR_OFF)
             else:
                 print(GREEN + f"No change detected on {name}." + COLOR_OFF)
                 
@@ -123,7 +140,6 @@ def send_email(changes):
     plain_body = "Hey!\n\nChanges detected on monitored websites:\n\n"
     for name, url, diff in changes:
         plain_body += f"🔹 {name}\nURL: {url}\nChanges:\n"
-        # Only show first 50 lines in plaintext to avoid overwhelming the reader
         plain_body += "\n".join(diff[:50])
         if len(diff) > 50:
             plain_body += "\n... (diff truncated)"
@@ -173,7 +189,7 @@ def send_email(changes):
             elif safe_line.startswith('@@'):
                 formatted_diff += f"<div class='chunk-header'>{safe_line}</div>"
             elif safe_line.startswith('+++') or safe_line.startswith('---'):
-                continue # Skip the file header info lines 
+                continue 
             else:
                 formatted_diff += f"<div class='context'>{safe_line}</div>"
 
