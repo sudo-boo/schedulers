@@ -12,7 +12,7 @@
     "websites": [
         {
             "name": "DWC-About-Us-Page",
-            "url": "https://www.timeanddate.com/worldclock/india/mumbai",
+            "url": "https://delhiwatchcompany.com/pages/about-us",
             "selector": "div.page-width.page-width--narrow.relative"
         }
     ]
