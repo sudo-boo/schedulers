@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  send-contest-reminder:
+  send-change-reminders:
     runs-on: ubuntu-latest
 
     steps:
