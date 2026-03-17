@@ -1,4 +1,4 @@
-name: Watch Web Content Change
+name: Web Content Change Reminder
 
 on:
   schedule:
