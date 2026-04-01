@@ -16,8 +16,18 @@
             "selector": "div.page-width.page-width--narrow.relative"
         },
         {
+            "name": "DWC-Collection-Page",
+            "url": "https://delhiwatchcompany.com/collections/mens-watches",
+            "selector": "div.collection.page-width.relative.with-drawer"
+        },
+        {
             "name": "DWC-Terra-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches/products/dwc-terra",
+            "selector": "div.page-width.page-width--full.relative"
+        },
+        {
+            "name": "DWC-Triple-Crown-Page",
+            "url": "https://delhiwatchcompany.com/collections/mens-watches/products/dwc-triple-crown",
             "selector": "div.page-width.page-width--full.relative"
         }
     ]
