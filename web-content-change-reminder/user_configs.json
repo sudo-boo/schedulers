@@ -29,6 +29,11 @@
             "name": "DWC-Triple-Crown-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches/products/dwc-triple-crown",
             "selector": "div.page-width.page-width--full.relative"
+        },
+        {
+            "name": "Warli-Art",
+            "url": "https://kalawatches.com/product/warli-art-edition-terracotta",
+            "selector": "div.e-con-inner div.elementor-element"
         }
     ]
 }
