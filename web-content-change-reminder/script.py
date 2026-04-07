@@ -7,6 +7,7 @@ import smtplib
 import difflib
 import html
 from bs4 import BeautifulSoup
+from time import sleep
 from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -124,6 +125,8 @@ def check_and_archive_changes():
                 print(GREEN + f"✅ Change detected on {name}! Archived full HTML as {now_str}.html" + COLOR_OFF)
             else:
                 print(GREEN + f"No change detected on {name}." + COLOR_OFF)
+            
+            sleep(1)  # Be polite to the server and avoid rapid requests
                 
         except Exception as e:
             print(RED + f"Failed to check/save content for {name}: {e}" + COLOR_OFF)
