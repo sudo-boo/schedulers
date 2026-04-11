@@ -34,6 +34,11 @@
             "name": "Warli-Art",
             "url": "https://kalawatches.com/product/warli-art-edition-terracotta",
             "selector": "div.e-con-inner div.elementor-element"
-        }
+        },
+        {
+            "name": "Ratio-Freediver-GMT-Pepsi-Dial",
+            "url": "https://www.ratiowatches.com/collections/ratio-rtf-gmt/products/ratio-freediver-gmt-series-sapphire-stainless-steel-white-dial-blue-red-pepsi-bezel-automatic-rtf061-200m-mens-watch",
+            "selector": "div.row.full-width-row"
+        },
     ]
 }
