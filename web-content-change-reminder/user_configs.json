@@ -31,11 +31,6 @@
             "selector": "div.page-width.page-width--full.relative"
         },
         {
-            "name": "Warli-Art",
-            "url": "https://kalawatches.com/product/warli-art-edition-terracotta",
-            "selector": "div.e-con-inner div.elementor-element"
-        },
-        {
             "name": "DWC-Accessories-Page",
             "url": "https://delhiwatchcompany.com/collections/accessories",
             "selector": "div.collection.page-width.relative.with-drawer"
