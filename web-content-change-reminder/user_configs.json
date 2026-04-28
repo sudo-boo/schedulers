@@ -26,6 +26,11 @@
             "selector": "div.page-width.page-width--full.relative"
         },
         {
+            "name": "DWC-Vayu-Bison-Page",
+            "url": "https://delhiwatchcompany.com/collections/mens-watches/products/vayu-bison",
+            "selector": "div.page-width.page-width--full.relative"
+        },
+        {
             "name": "DWC-Triple-Crown-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches/products/dwc-triple-crown",
             "selector": "div.page-width.page-width--full.relative"
