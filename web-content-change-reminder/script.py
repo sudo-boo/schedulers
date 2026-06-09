@@ -99,6 +99,7 @@ def check_and_archive_changes():
             
             # Extract target areas for comparison
             current_target = extract_target_content(current_full_content, selector, name)
+            print(f"Current Target Value for {name}: {current_target}")
             old_target = extract_target_content(old_full_content, selector, name)
             
             # Compare and generate diff
