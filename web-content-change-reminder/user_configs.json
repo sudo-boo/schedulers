@@ -43,7 +43,7 @@
         {
             "name": "Xiaomi-PowerBank-20000-Price",
             "url": "https://www.mi.com/in/product/xiaomi-power-bank-20000/buy/",
-            "selector": ".main-section__info-section__price-container .mi-price"
+            "selector": ".buy-product__installment-price__sale"
         }
     ]
 }
