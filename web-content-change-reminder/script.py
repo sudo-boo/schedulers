@@ -23,11 +23,11 @@ IST = pytz.timezone('Asia/Kolkata')
 load_dotenv()
 
 SENDER_EMAIL = str(os.getenv("SENDER_EMAIL"))
-if not SENDER_EMAIL:
+if not SENDER_EMAIL or SENDER_EMAIL == "None":
     raise ValueError("SENDER_EMAIL not found in .env file.")
 
 SENDER_PASSWORD = str(os.getenv("SENDER_PASSWORD"))
-if not SENDER_PASSWORD:
+if not SENDER_PASSWORD or SENDER_PASSWORD == "None":
     raise ValueError("SENDER_PASSWORD not found in .env file.")
 
 if SENDER_EMAIL and SENDER_PASSWORD:
@@ -35,7 +35,7 @@ if SENDER_EMAIL and SENDER_PASSWORD:
 else:
     raise ValueError("One or more environment variables are missing. Please check your .env file.")
 
-# read user_configs.json file
+# Read user_configs.json file
 try:
     with open("user_configs.json", "r") as f:
         config = json.load(f)
@@ -48,36 +48,54 @@ except Exception as e:
         
 RECEIVER_EMAILS = [(user["email"], user["name"]) for user in user_emails]
 
-# Include the optional selector in the tuple (defaults to None if missing)
-WEBSITES = [(site["name"], site["url"], site.get("selector")) for site in websites]
+# Include the optional selector and type (defaults to None and "html" if missing)
+WEBSITES = [(site["name"], site["url"], site.get("selector"), site.get("type", "html")) for site in websites]
 
 def current_time_str():
     return datetime.datetime.now(IST).strftime("%H:%M:%S")
 
-def extract_target_content(full_html, selector, site_name):
-    """Extracts a specific part of the HTML based on a CSS selector."""
+def extract_target_content(full_content, selector, site_name, site_type):
+    """Extracts a specific part of HTML or JSON based on the config type."""
     if not selector:
-        return full_html # If no selector provided, check the whole page
+        return full_content # If no selector provided, check the whole page
         
-    soup = BeautifulSoup(full_html, 'html.parser')
-    element = soup.select_one(selector)
-    
-    if element:
-        # .prettify() normalizes the HTML making the diff much cleaner to read
-        return element.prettify()
+    # --- JSON / API Extraction ---
+    if site_type.lower() in ["json", "api"]:
+        try:
+            data = json.loads(full_content)
+            keys = selector.split('.') # e.g., splits "data.price" into ["data", "price"]
+            current = data
+            for key in keys:
+                current = current[key]
+            # Return as a formatted string so the diff generator handles it cleanly
+            return json.dumps(current, indent=2)
+            
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            print(YELLOW + f"⚠️ Warning: JSON path '{selector}' failed on {site_name}: {e}. Defaulting to full output." + COLOR_OFF)
+            return full_content
+            
+    # --- HTML Extraction ---
     else:
-        print(YELLOW + f"⚠️ Warning: Selector '{selector}' not found on {site_name}. Defaulting to full HTML check." + COLOR_OFF)
-        return full_html
+        soup = BeautifulSoup(full_content, 'html.parser')
+        element = soup.select_one(selector)
+        
+        if element:
+            # .prettify() normalizes the HTML making the diff much cleaner to read
+            return element.prettify()
+        else:
+            print(YELLOW + f"⚠️ Warning: Selector '{selector}' not found on {site_name}. Defaulting to full HTML check." + COLOR_OFF)
+            return full_content
 
 def check_and_archive_changes():
     changes = []
     now_str = datetime.datetime.now(IST).strftime("%Y-%m-%d_%H-%M-%S")
     
-    for name, url, selector in WEBSITES:
+    # Loop expects 4 variables now
+    for name, url, selector, site_type in WEBSITES:
         try:
             site_dir = os.path.join("archives", name)
             os.makedirs(site_dir, exist_ok=True)
-            latest_path = os.path.join(site_dir, "latest.html")
+            latest_path = os.path.join(site_dir, "latest.txt") # Changed extension to .txt to support both json/html
             
             # Fetch content
             response = requests.get(url)
@@ -88,7 +106,10 @@ def check_and_archive_changes():
             if not os.path.exists(latest_path):
                 with open(latest_path, "w", encoding="utf-8") as f:
                     f.write(current_full_content)
-                with open(os.path.join(site_dir, f"{now_str}.html"), "w", encoding="utf-8") as f:
+                
+                # Save initial archive with dynamic extension
+                ext = "json" if site_type.lower() in ["json", "api"] else "html"
+                with open(os.path.join(site_dir, f"{now_str}.{ext}"), "w", encoding="utf-8") as f:
                     f.write(current_full_content)
                 print(YELLOW + f"No previous content found for {name}. Saved initial version." + COLOR_OFF)
                 continue
@@ -97,10 +118,11 @@ def check_and_archive_changes():
             with open(latest_path, "r", encoding="utf-8") as f:
                 old_full_content = f.read()
             
-            # Extract target areas for comparison
-            current_target = extract_target_content(current_full_content, selector, name)
+            # Extract target areas for comparison, passing the site_type
+            current_target = extract_target_content(current_full_content, selector, name, site_type)
             print(f"Current Target Value for {name}: {current_target}")
-            old_target = extract_target_content(old_full_content, selector, name)
+            
+            old_target = extract_target_content(old_full_content, selector, name, site_type)
             
             # Compare and generate diff
             if current_target != old_target:
@@ -116,13 +138,14 @@ def check_and_archive_changes():
                 
                 changes.append((name, url, diff_list))
                 
-                # Update latest.html and create a new archived version with the FULL HTML
+                # Update latest and create a new archived version
+                ext = "json" if site_type.lower() in ["json", "api"] else "html"
                 with open(latest_path, "w", encoding="utf-8") as f:
                     f.write(current_full_content)
-                with open(os.path.join(site_dir, f"{now_str}.html"), "w", encoding="utf-8") as f:
+                with open(os.path.join(site_dir, f"{now_str}.{ext}"), "w", encoding="utf-8") as f:
                     f.write(current_full_content)
                     
-                print(GREEN + f"✅ Change detected on {name}! Archived full HTML as {now_str}.html" + COLOR_OFF)
+                print(GREEN + f"✅ Change detected on {name}! Archived full data as {now_str}.{ext}" + COLOR_OFF)
             else:
                 print(GREEN + f"No change detected on {name}." + COLOR_OFF)
                 

@@ -3,47 +3,50 @@
         {
             "name": "Personal Email",
             "email": "omkarshirpure00@gmail.com"
-        },
-        {
-            "name": "Insti Email",
-            "email": "22b0910@iitb.ac.in"
         }
     ],
     "websites": [
         {
             "name": "DWC-About-Us-Page",
             "url": "https://delhiwatchcompany.com/pages/about-us",
-            "selector": "div.page-width.page-width--narrow.relative"
+            "selector": "div.page-width.page-width--narrow.relative",
+            "type": "html"
         },
         {
             "name": "DWC-Collection-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches",
-            "selector": "div.collection.page-width.relative.with-drawer"
+            "selector": "div.collection.page-width.relative.with-drawer",
+            "type": "html"
         },
         {
             "name": "DWC-Terra-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches/products/dwc-terra",
-            "selector": "div.page-width.page-width--full.relative"
+            "selector": "div.page-width.page-width--full.relative",
+            "type": "html"
         },
         {
             "name": "DWC-Vayu-Bison-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches/products/vayu-bison",
-            "selector": "div.page-width.page-width--full.relative"
+            "selector": "div.page-width.page-width--full.relative",
+            "type": "html"
         },
         {
             "name": "DWC-Triple-Crown-Page",
             "url": "https://delhiwatchcompany.com/collections/mens-watches/products/dwc-triple-crown",
-            "selector": "div.page-width.page-width--full.relative"
+            "selector": "div.page-width.page-width--full.relative",
+            "type": "html"
         },
         {
             "name": "DWC-Accessories-Page",
             "url": "https://delhiwatchcompany.com/collections/accessories",
-            "selector": "div.collection.page-width.relative.with-drawer"
+            "selector": "div.collection.page-width.relative.with-drawer",
+            "type": "html"
         },
         {
             "name": "Xiaomi-PowerBank-20000-Price",
-            "url": "https://www.mi.com/in/product/xiaomi-power-bank-20000/buy/",
-            "selector": ".buy-product__installment-price__sale"
+            "url": "https://in-go.buy.mi.com/in/productstation/structured-data?product_name=xiaomi-power-bank-20000&page_name=buy",
+            "selector": "data.price",
+            "type": "json"
         }
     ]
 }
