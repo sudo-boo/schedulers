@@ -39,6 +39,11 @@
             "name": "DWC-Accessories-Page",
             "url": "https://delhiwatchcompany.com/collections/accessories",
             "selector": "div.collection.page-width.relative.with-drawer"
+        },
+        {
+            "name": "Xiaomi-PowerBank-20000-Page",
+            "url": "https://www.mi.com/in/product/xiaomi-power-bank-20000/buy/",
+            "selector": "strong.notranslate[data-currency-pos='pre']"
         }
     ]
 }
