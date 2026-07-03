@@ -41,12 +41,5 @@
             "url": "https://delhiwatchcompany.com/collections/accessories",
             "selector": "div.collection.page-width.relative.with-drawer",
             "type": "html"
-        },
-        {
-            "name": "Xiaomi-PowerBank-20000-Price",
-            "url": "https://in-go.buy.mi.com/in/productstation/structured-data?product_name=xiaomi-power-bank-20000&page_name=buy",
-            "selector": "data.price",
-            "type": "json"
-        }
-    ]
+        }    ]
 }
