@@ -2,7 +2,7 @@ name: Contest Reminder Email
 
 on:
   schedule:
-    - cron: '30 7,13 * * *'
+    - cron: '30 7 * * *'
   workflow_dispatch:
 
 jobs:
